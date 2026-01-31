@@ -9,22 +9,48 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #000;
+            background-color: #1a1a1a;
+            font-family: system-ui, -apple-system, sans-serif;
             display:flex;
             flex-direction: row;
             align-items: center;
             justify-content: center;
             height: 100vh;
-
+            gap: 20px;
         }
         canvas {
-            border: green solid 2px;
+            background-color: #000;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             display: block;
+            max-width: 80vw;
+            max-height: 90vh;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
 <body>
     <canvas id="sandBox" width="1000" height="1000"></canvas>
+    <div>
+        <button id="gravityFlip">Flip</button>
+        <button id="togglePlay">Start</button>
+    </div>
 </body>
 <script src="main.js"></script>
 </html>

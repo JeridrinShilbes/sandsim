@@ -1,22 +1,37 @@
 const tileSize=5;
-const screen=document.getElementById("sandBox");
-const X=screen.width/tileSize;
-const Y=screen.height/tileSize;
 const tileColor="yellow";
 const frameRate=64;
+const availabeGravity=("-y","x","y","-x");
+let currentGravity=0;
+
+const screen=document.getElementById("sandBox");
+const button=document.getElementById("togglePlay");
+const gFlip=document.getElementById("gravityFlip");
+gFlip.addEventListener("click",rotateGravity);
+
+const X=screen.width/tileSize;
+const Y=screen.height/tileSize;
+
 
 
 function main()
 {
     const array=new Array(X*Y).fill(false);
-
-    renderState(array);
-    document.addEventListener("keydown",()=>
-    {
-        setInterval(() => {
-            animateMain(array);
-        }, Math.floor(1000/frameRate));
-    },{once:true});
+    let intervalId=null;
+    button.addEventListener("click",()=>{
+        if(button.innerText==="Start")
+        {
+            button.innerText="Stop!";
+            intervalId=setInterval(() => {
+                animateMain(array);
+            }, Math.floor(1000/frameRate));
+        }
+        else{
+            clearInterval(intervalId);
+            intervalId=null;
+            button.innerText="Start";
+        }
+    })
 }
 const pickRand=(start,end)=>
 {
@@ -58,23 +73,8 @@ const stepSingle=(array)=>
         const tile=array[i];
         if(tile)
         {
-            const newPos=findFlow(i,array);
             array[i]=false; //clear prev pos
-            switch(newPos)
-            {
-                case 0:
-                    array[i]=true;
-                    break;
-                case 1:
-                    array[i+X-1]=true;
-                    break;
-                case 2:
-                    array[i+X]=true;
-                    break;
-                case 3:
-                    array[i+X+1]=true;
-                    break;
-            }
+            array[findFlow(i,array)]=true;
         }
     }
 }
@@ -83,15 +83,21 @@ const findFlow=(ind,array)=>
 {
     const x=ind%X;
     const y=Math.floor(ind/X);
-    if(y==Y-1)return 0;
+    if(y==Y-1)return ind;
+
     const left=(x==0 || array[ind+X-1]);
     const middle=(array[ind+X]);
     const right=(x==0 || array[ind+X+1]);
-    if(middle && right && left)return 0;
-    if(!middle)return 2;
-    if(!right && !left)return (Math.floor(Math.random()*1000)%2===1)?1:3;
-    if(!left)return 1;
-    if(!right)return 3;
+
+    if(middle && right && left)return ind;
+
+    if(!middle)return ind+X;
+
+    if(!right && !left)return (Math.floor(Math.random()*1000)%2===1)?ind+X-1:ind+X+1;
+
+    if(!left)return ind+X-1;
+
+    if(!right)return ind+X+1;
 }
 //main animation functioon
 function animateMain(array)
@@ -100,5 +106,12 @@ function animateMain(array)
     stepSingle(array);
     renderState(array);
 }
+//function to update gravity
+function rotateGravity()
+{
+    currentGravity=(currentGravity+1)%4;
+    console.log(currentGravity);
+}
+
 
 main();
